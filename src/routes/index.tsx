@@ -1387,7 +1387,37 @@ function HotelWorkspace() {
       </div>
 
       {/* ---------------- drawers ---------------- */}
-      <EditDrawer target={edit} onOpenChange={(o) => !o && setEdit(null)} />
+      <EditDialog target={edit} onOpenChange={(o) => !o && setEdit(null)} />
+
+      <Dialog open={galleryOpen} onOpenChange={setGalleryOpen}>
+        <DialogContent className="sm:max-w-3xl">
+          <DialogHeader className="text-left">
+            <DialogTitle className="text-[17px]">Property photos</DialogTitle>
+          </DialogHeader>
+          <div className="grid max-h-[70vh] gap-3 overflow-y-auto sm:grid-cols-2">
+            {gallery.map((img) => (
+              <figure key={img.id} className="overflow-hidden rounded-xl border border-border">
+                <img
+                  src={img.src}
+                  alt={img.label}
+                  loading="lazy"
+                  width={1024}
+                  height={768}
+                  className="aspect-[4/3] w-full object-cover"
+                />
+                <figcaption className="flex items-center justify-between px-3 py-2 text-[12px] text-muted-foreground">
+                  {img.label}
+                  {img.id === coverId ? (
+                    <span className="text-[10px] font-semibold tracking-wide text-primary uppercase">
+                      Cover
+                    </span>
+                  ) : null}
+                </figcaption>
+              </figure>
+            ))}
+          </div>
+        </DialogContent>
+      </Dialog>
 
       <Sheet open={detail !== null} onOpenChange={(o) => !o && setDetail(null)}>
         <SheetContent className="w-full overflow-y-auto sm:max-w-md">
