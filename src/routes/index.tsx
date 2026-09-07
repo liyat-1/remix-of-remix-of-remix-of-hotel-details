@@ -1188,7 +1188,7 @@ function HotelWorkspace() {
             </div>
 
             {/* legal & billing — bento card */}
-            <div id="legal" className="scroll-mt-[118px] md:col-span-2 xl:col-span-2">
+            <div id="legal" className="scroll-mt-[118px] md:col-span-2 xl:col-span-4">
               <Surface className="h-full">
                 <div className="mb-4 flex items-center gap-2.5">
                   <span className="grid size-8 place-items-center rounded-[10px] bg-primary/10 text-primary">
