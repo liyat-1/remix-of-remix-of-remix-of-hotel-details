@@ -1196,14 +1196,17 @@ function HotelWorkspace() {
                   </span>
                   <h2 className="text-[15px] font-semibold text-foreground">Legal & billing</h2>
                 </div>
-                <div className="grid gap-6 lg:grid-cols-2">
-                  <div>
-                    <div className="mb-3 flex items-center justify-between">
-                      <SubTitle>Legal</SubTitle>
+                <div className="grid gap-3 lg:grid-cols-2">
+                  <Panel
+                    icon={Landmark}
+                    title="Legal"
+                    hint="Entity and registration"
+                    action={
                       <Button variant="ghost" size="sm" onClick={editLegal}>
                         Edit
                       </Button>
-                    </div>
+                    }
+                  >
                     {hotel.legal ? (
                       <div className="space-y-0.5">
                         <Row label="Legal name" value={hotel.legal.legalName} />
