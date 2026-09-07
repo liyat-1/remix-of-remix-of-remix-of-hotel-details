@@ -1108,57 +1108,84 @@ function HotelWorkspace() {
                     Edit
                   </Button>
                 </div>
-                <div className="space-y-4">
-                  {[
-                    { role: "CSM", name: hotel.people.csm },
-                    { role: "Sales agent", name: hotel.people.salesAgent },
-                    { role: "Referrer", name: hotel.people.referrer },
-                  ].map((p) => (
-                    <div key={p.role}>
-                      <div className="text-[12px] text-muted-foreground">{p.role}</div>
-                      <div className="text-[14.5px] font-semibold text-foreground">{p.name}</div>
-                    </div>
-                  ))}
-                </div>
-                <div className="mt-5 border-t border-border pt-4">
-                  <SubTitle>Hotel emails</SubTitle>
-                  {hotel.people.emails.length === 0 ? (
-                    <div className="rounded-lg border border-dashed border-border px-4 py-5 text-center">
-                      <Muted>No hotel emails added yet.</Muted>
-                      <div className="mt-2">
-                        <Button
-                          variant="outline"
-                          size="sm"
-                          onClick={() =>
-                            openEdit("hotel contact", [
-                              { label: "Name", value: "" },
-                              { label: "Role", value: "" },
-                              { label: "Email", value: "" },
-                            ])
-                          }
+                <div className="grid gap-3 lg:grid-cols-2">
+                  <Panel
+                    icon={UserRound}
+                    title="Account team"
+                    hint="Who looks after this property"
+                    action={
+                      <Button variant="ghost" size="sm" onClick={editTeam}>
+                        Edit
+                      </Button>
+                    }
+                  >
+                    <div className="space-y-2">
+                      {[
+                        { role: "CSM", name: hotel.people.csm },
+                        { role: "Sales agent", name: hotel.people.salesAgent },
+                        { role: "Referrer", name: hotel.people.referrer },
+                      ].map((p) => (
+                        <div
+                          key={p.role}
+                          className="flex items-center gap-3 rounded-xl border border-border/60 bg-surface px-3 py-2.5"
                         >
-                          <Plus className="size-4" /> Add contact
-                        </Button>
-                      </div>
-                    </div>
-                  ) : (
-                    <div className="space-y-3.5">
-                      {hotel.people.emails.map((e) => (
-                        <div key={e.email} className="flex items-start justify-between gap-3">
+                          <InitialsAvatar name={p.name} />
                           <div className="min-w-0">
-                            <div className="text-[12px] text-muted-foreground">{e.role}</div>
-                            <a
-                              href={`mailto:${e.email}`}
-                              className="block truncate text-[13.5px] font-medium text-foreground hover:text-primary hover:underline"
-                            >
-                              {e.email}
-                            </a>
+                            <div className="truncate text-[13.5px] font-semibold text-foreground">
+                              {p.name}
+                            </div>
+                            <div className="text-[11.5px] text-muted-foreground">{p.role}</div>
                           </div>
-                          <CopyButton value={e.email} compact />
                         </div>
                       ))}
                     </div>
-                  )}
+                  </Panel>
+
+                  <Panel icon={Mail} title="Hotel emails" hint="Contacts at the property">
+                    {hotel.people.emails.length === 0 ? (
+                      <div className="rounded-xl border border-dashed border-border px-4 py-5 text-center">
+                        <Muted>No hotel emails added yet.</Muted>
+                        <div className="mt-2">
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            onClick={() =>
+                              openEdit("hotel contact", [
+                                { label: "Name", value: "" },
+                                { label: "Role", value: "" },
+                                { label: "Email", value: "" },
+                              ])
+                            }
+                          >
+                            <Plus className="size-4" /> Add contact
+                          </Button>
+                        </div>
+                      </div>
+                    ) : (
+                      <div className="space-y-2">
+                        {hotel.people.emails.map((e) => (
+                          <div
+                            key={e.email}
+                            className="flex items-center justify-between gap-3 rounded-xl border border-border/60 bg-surface px-3 py-2.5"
+                          >
+                            <div className="flex min-w-0 items-center gap-3">
+                              <InitialsAvatar name={e.name ?? e.role} size="sm" />
+                              <div className="min-w-0">
+                                <a
+                                  href={`mailto:${e.email}`}
+                                  className="block truncate text-[13px] font-medium text-foreground hover:text-primary hover:underline"
+                                >
+                                  {e.email}
+                                </a>
+                                <div className="text-[11.5px] text-muted-foreground">{e.role}</div>
+                              </div>
+                            </div>
+                            <CopyButton value={e.email} compact />
+                          </div>
+                        ))}
+                      </div>
+                    )}
+                  </Panel>
                 </div>
               </Surface>
             </div>
