@@ -97,8 +97,8 @@ export function Donut({
   total,
   centerValue,
   centerLabel,
-  size = 168,
-  thickness = 16,
+  size = 176,
+  thickness = 30,
 }: {
   segments: Segment[];
   total: number;
@@ -120,11 +120,13 @@ export function Donut({
           r={r}
           fill="none"
           strokeWidth={thickness}
-          className="stroke-muted"
+          strokeLinecap="round"
+          className="stroke-surface-muted"
         />
         {segments.filter((s) => s.value > 0).map((s, i) => {
           const len = total > 0 ? (s.value / total) * c : 0;
-          const dash = `${Math.max(len - 3, 0)} ${c - Math.max(len - 3, 0)}`;
+          const gap = segments.filter((x) => x.value > 0).length > 1 ? 8 : 0;
+          const dash = `${Math.max(len - gap, 0)} ${c - Math.max(len - gap, 0)}`;
           const el = (
             <circle
               key={i}
@@ -214,5 +216,96 @@ export function ActionTile({
         <span className="block truncate text-[11.5px] text-muted-foreground">{description}</span>
       </span>
     </button>
+  );
+}
+
+/* ------------------------------------------------------------------ */
+/* Grouped panel — soft background block used to separate sub-groups    */
+/* ------------------------------------------------------------------ */
+
+export function Panel({
+  icon: Icon,
+  title,
+  hint,
+  action,
+  children,
+  className,
+}: {
+  icon?: ComponentType<{ className?: string }>;
+  title: string;
+  hint?: string;
+  action?: ReactNode;
+  children: ReactNode;
+  className?: string;
+}) {
+  return (
+    <div
+      className={cn(
+        "flex flex-col rounded-2xl border border-border/70 bg-surface-muted/70 p-4 transition-colors hover:border-border",
+        className,
+      )}
+    >
+      <div className="mb-3 flex items-center gap-2.5">
+        {Icon ? (
+          <span className="grid size-7 shrink-0 place-items-center rounded-lg bg-surface text-muted-foreground shadow-[0_1px_2px_oklch(0.25_0.03_255/0.05)]">
+            <Icon className="size-3.5" />
+          </span>
+        ) : null}
+        <span className="min-w-0 flex-1">
+          <span className="block truncate text-[12.5px] font-semibold text-foreground">
+            {title}
+          </span>
+          {hint ? (
+            <span className="block truncate text-[11px] text-muted-foreground">{hint}</span>
+          ) : null}
+        </span>
+        {action ? <span className="shrink-0">{action}</span> : null}
+      </div>
+      <div className="min-h-0 flex-1">{children}</div>
+    </div>
+  );
+}
+
+/* ------------------------------------------------------------------ */
+/* Initials avatar                                                     */
+/* ------------------------------------------------------------------ */
+
+const avatarTones = [
+  "bg-primary/12 text-primary",
+  "bg-success-soft text-success",
+  "bg-warning-soft text-warning",
+  "bg-muted text-muted-foreground",
+] as const;
+
+export function InitialsAvatar({
+  name,
+  size = "md",
+  className,
+}: {
+  name: string;
+  size?: "sm" | "md";
+  className?: string;
+}) {
+  const initials = name
+    .split(/\s+/)
+    .filter(Boolean)
+    .slice(0, 2)
+    .map((w) => w[0]?.toUpperCase() ?? "")
+    .join("");
+  const tone =
+    avatarTones[
+      Math.abs([...name].reduce((a, ch) => a + ch.charCodeAt(0), 0)) % avatarTones.length
+    ] ?? avatarTones[0];
+  return (
+    <span
+      className={cn(
+        "grid shrink-0 place-items-center rounded-full font-semibold",
+        size === "sm" ? "size-7 text-[10.5px]" : "size-9 text-[12px]",
+        tone,
+        className,
+      )}
+    >
+      {initials || "–"}
+    </span>
   );
 }

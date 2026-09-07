@@ -36,8 +36,24 @@ import {
   BadgeCheck,
   Gauge,
   Link as LinkIcon,
+  LogIn,
+  LogOut,
+  Hash,
+  CalendarDays,
+  Landmark,
+  Receipt,
+  UserRound,
+  Images,
+  Layers,
 } from "lucide-react";
-import { CardShell, Donut, LegendItem, ActionTile } from "@/components/hotel/cards";
+import {
+  CardShell,
+  Donut,
+  LegendItem,
+  ActionTile,
+  Panel,
+  InitialsAvatar,
+} from "@/components/hotel/cards";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Checkbox } from "@/components/ui/checkbox";
@@ -71,9 +87,18 @@ import {
   type Hotel,
 } from "@/lib/hotel-data";
 import { StatusDot, StatusPill, CopyButton } from "@/components/hotel/primitives";
-import { EditDrawer, type EditTarget, type EditField } from "@/components/hotel/EditDrawer";
+import {
+  EditDialog,
+  type EditTarget,
+  type EditField,
+  type GalleryImage,
+} from "@/components/hotel/EditDialog";
 import { AppSidebar } from "@/components/hotel/AppSidebar";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import propertyImage from "@/assets/hotel-property.jpg";
+import lobbyImage from "@/assets/hotel-lobby.jpg";
+import roomImage from "@/assets/hotel-room.jpg";
+import poolImage from "@/assets/hotel-pool.jpg";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -120,14 +145,19 @@ function Row({
   label,
   value,
   action,
+  icon: Icon,
 }: {
   label: string;
   value: ReactNode;
   action?: ReactNode;
+  icon?: React.ComponentType<{ className?: string }>;
 }) {
   return (
-    <div className="flex items-start justify-between gap-6 py-[7px]">
-      <span className="shrink-0 pt-px text-[12.5px] text-muted-foreground">{label}</span>
+    <div className="flex items-start justify-between gap-6 rounded-lg px-1 py-[7px] transition-colors hover:bg-surface/70">
+      <span className="flex shrink-0 items-center gap-2 pt-px text-[12.5px] text-muted-foreground">
+        {Icon ? <Icon className="size-3.5 shrink-0 text-muted-foreground/60" /> : null}
+        {label}
+      </span>
       <span className="flex min-w-0 items-center gap-1.5 text-right text-[13.5px] font-medium text-foreground">
         {value}
         {action}
@@ -199,6 +229,30 @@ const sectionNav = [
 
 const tagLibrary = ["Priority", "Enterprise", "Marriott", "VIP", "Cruiseport", "Churn risk"];
 
+const propertyStatuses = [
+  "Active",
+  "Onboarding",
+  "Attention required",
+  "Paused",
+  "Churned",
+] as const;
+
+const statusTone: Record<string, Health> = {
+  Active: "healthy",
+  Onboarding: "warning",
+  "Attention required": "failed",
+  Paused: "neutral",
+  Churned: "neutral",
+};
+
+const initialGallery: GalleryImage[] = [
+  { id: "exterior", src: propertyImage, label: "Exterior" },
+  { id: "lobby", src: lobbyImage, label: "Lobby" },
+  { id: "room", src: roomImage, label: "Guest room" },
+  { id: "pool", src: poolImage, label: "Rooftop pool" },
+];
+
+
 function HotelWorkspace() {
   const [scenario, setScenario] = useState<Scenario>("live");
   const [store, setStore] = useState<Record<Scenario, Hotel>>(scenarios);
@@ -210,6 +264,32 @@ function HotelWorkspace() {
   const [tagQuery, setTagQuery] = useState("");
   const [scrolled, setScrolled] = useState(false);
   const [active, setActive] = useState("snapshot");
+  const [gallery, setGallery] = useState<GalleryImage[]>(initialGallery);
+  const [coverId, setCoverId] = useState("exterior");
+  const [galleryOpen, setGalleryOpen] = useState(false);
+  const [statusOverride, setStatusOverride] = useState<string | null>(null);
+
+  const coverImage = gallery.find((g) => g.id === coverId)?.src ?? gallery[0]?.src ?? propertyImage;
+
+  const deleteImage = (id: string) => {
+    setGallery((g) => {
+      const next = g.filter((i) => i.id !== id);
+      if (id === coverId && next[0]) setCoverId(next[0].id);
+      return next;
+    });
+    toast.success("Photo removed");
+  };
+
+  const makeCover = (id: string) => {
+    setCoverId(id);
+    toast.success("Cover photo updated");
+  };
+
+  const restoreGallery = () => {
+    setGallery(initialGallery);
+    toast.success("Photos restored");
+  };
+
 
   const hotel = store[scenario];
 
@@ -271,6 +351,13 @@ function HotelWorkspace() {
       sub: `Service started ${hotel.service.startedOn}`,
     };
   }, [hotel, attention]);
+
+  const propertyStatus =
+    statusOverride ?? (lifecycle.label === "Service ended" ? "Churned" : lifecycle.label);
+  const propertyStatusTone = statusOverride
+    ? (statusTone[statusOverride] ?? "neutral")
+    : lifecycle.status;
+
 
   const location = useMemo(() => {
     const addr = hotel.legal?.billingAddress;
@@ -339,17 +426,32 @@ function HotelWorkspace() {
     }));
 
   const editHotel = () =>
-    openEdit(
-      "hotel",
-      [
+    setEdit({
+      title: "hotel",
+      fields: [
         { label: "Hotel name", value: hotel.name },
+        {
+          label: "Property status",
+          value: propertyStatus,
+          type: "select",
+          options: [...propertyStatuses],
+          hint: "Shown on the property header",
+        },
         { label: "Group", value: hotel.identity.group },
         { label: "Rooms", value: hotel.identity.rooms },
         { label: "Check-in", value: hotel.identity.checkIn },
         { label: "Check-out", value: hotel.identity.checkOut },
         { label: "Hotel ID", value: hotel.identity.hotelId, hint: "PMS property code" },
       ],
-      (v) =>
+      gallery: {
+        images: gallery,
+        coverId,
+        onDelete: deleteImage,
+        onCover: makeCover,
+        onAdd: restoreGallery,
+      },
+      onSave: (v) => {
+        if (v["Property status"]) setStatusOverride(v["Property status"]);
         patch((h) => ({
           ...h,
           name: v["Hotel name"] ?? h.name,
@@ -361,8 +463,9 @@ function HotelWorkspace() {
             checkOut: v["Check-out"] ?? h.identity.checkOut,
             hotelId: v["Hotel ID"] ?? h.identity.hotelId,
           },
-        })),
-    );
+        }));
+      },
+    });
 
   const editTeam = () =>
     openEdit(
@@ -582,7 +685,7 @@ function HotelWorkspace() {
               <header className="grid min-h-[220px] overflow-hidden rounded-2xl border border-border bg-foreground shadow-[0_8px_28px_oklch(0.25_0.03_255/0.1)] lg:grid-cols-[34%_66%]">
                 <div className="relative min-h-[200px]">
                   <img
-                    src={propertyImage}
+                    src={coverImage}
                     alt={`Exterior of ${hotel.name}`}
                     width={1024}
                     height={768}
@@ -590,17 +693,28 @@ function HotelWorkspace() {
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-foreground/50 via-transparent to-transparent" />
                   <div className="absolute inset-x-3 bottom-3 flex items-center justify-between text-primary-foreground">
-                    <span className="rounded-md bg-foreground/65 px-2 py-1 text-[11px] backdrop-blur-sm">1 / 5</span>
-                    <Button size="sm" variant="secondary" className="h-8 bg-foreground/70 text-primary-foreground hover:bg-foreground/85">View gallery</Button>
+                    <span className="flex items-center gap-1.5 rounded-md bg-foreground/65 px-2 py-1 text-[11px] backdrop-blur-sm">
+                      <Images className="size-3.5" />
+                      {gallery.length} photo{gallery.length === 1 ? "" : "s"}
+                    </span>
+                    <Button
+                      size="sm"
+                      variant="secondary"
+                      className="h-8 bg-foreground/70 text-primary-foreground hover:bg-foreground/85"
+                      onClick={() => setGalleryOpen(true)}
+                      disabled={gallery.length === 0}
+                    >
+                      View gallery
+                    </Button>
                   </div>
                 </div>
                 <div className="relative flex min-h-[220px] flex-col justify-between overflow-hidden p-5 text-primary-foreground md:p-6">
-                  <img src={propertyImage} alt="" className="absolute inset-0 h-full w-full object-cover opacity-30" />
+                  <img src={coverImage} alt="" className="absolute inset-0 h-full w-full object-cover opacity-30" />
                   <div className="absolute inset-0 bg-foreground/85" />
                   <div className="relative pt-10 lg:pt-0">
                     <div className="min-w-0 max-w-[760px]">
                       <div className="mb-2 flex items-center gap-2 pr-36 sm:pr-44">
-                        <StatusPill status={lifecycle.status} label={lifecycle.label.toUpperCase()} />
+                        <StatusPill status={propertyStatusTone} label={propertyStatus.toUpperCase()} />
                         <span className="text-[12px] opacity-75">Property {hotel.displayId}</span>
                       </div>
                       <h1 className="max-w-3xl text-[24px] leading-[1.15] font-bold text-primary-foreground lg:text-[26px]">
@@ -1362,7 +1476,37 @@ function HotelWorkspace() {
       </div>
 
       {/* ---------------- drawers ---------------- */}
-      <EditDrawer target={edit} onOpenChange={(o) => !o && setEdit(null)} />
+      <EditDialog target={edit} onOpenChange={(o) => !o && setEdit(null)} />
+
+      <Dialog open={galleryOpen} onOpenChange={setGalleryOpen}>
+        <DialogContent className="sm:max-w-3xl">
+          <DialogHeader className="text-left">
+            <DialogTitle className="text-[17px]">Property photos</DialogTitle>
+          </DialogHeader>
+          <div className="grid max-h-[70vh] gap-3 overflow-y-auto sm:grid-cols-2">
+            {gallery.map((img) => (
+              <figure key={img.id} className="overflow-hidden rounded-xl border border-border">
+                <img
+                  src={img.src}
+                  alt={img.label}
+                  loading="lazy"
+                  width={1024}
+                  height={768}
+                  className="aspect-[4/3] w-full object-cover"
+                />
+                <figcaption className="flex items-center justify-between px-3 py-2 text-[12px] text-muted-foreground">
+                  {img.label}
+                  {img.id === coverId ? (
+                    <span className="text-[10px] font-semibold tracking-wide text-primary uppercase">
+                      Cover
+                    </span>
+                  ) : null}
+                </figcaption>
+              </figure>
+            ))}
+          </div>
+        </DialogContent>
+      </Dialog>
 
       <Sheet open={detail !== null} onOpenChange={(o) => !o && setDetail(null)}>
         <SheetContent className="w-full overflow-y-auto sm:max-w-md">
