@@ -685,7 +685,7 @@ function HotelWorkspace() {
               <header className="grid min-h-[220px] overflow-hidden rounded-2xl border border-border bg-foreground shadow-[0_8px_28px_oklch(0.25_0.03_255/0.1)] lg:grid-cols-[34%_66%]">
                 <div className="relative min-h-[200px]">
                   <img
-                    src={propertyImage}
+                    src={coverImage}
                     alt={`Exterior of ${hotel.name}`}
                     width={1024}
                     height={768}
@@ -693,17 +693,28 @@ function HotelWorkspace() {
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-foreground/50 via-transparent to-transparent" />
                   <div className="absolute inset-x-3 bottom-3 flex items-center justify-between text-primary-foreground">
-                    <span className="rounded-md bg-foreground/65 px-2 py-1 text-[11px] backdrop-blur-sm">1 / 5</span>
-                    <Button size="sm" variant="secondary" className="h-8 bg-foreground/70 text-primary-foreground hover:bg-foreground/85">View gallery</Button>
+                    <span className="flex items-center gap-1.5 rounded-md bg-foreground/65 px-2 py-1 text-[11px] backdrop-blur-sm">
+                      <Images className="size-3.5" />
+                      {gallery.length} photo{gallery.length === 1 ? "" : "s"}
+                    </span>
+                    <Button
+                      size="sm"
+                      variant="secondary"
+                      className="h-8 bg-foreground/70 text-primary-foreground hover:bg-foreground/85"
+                      onClick={() => setGalleryOpen(true)}
+                      disabled={gallery.length === 0}
+                    >
+                      View gallery
+                    </Button>
                   </div>
                 </div>
                 <div className="relative flex min-h-[220px] flex-col justify-between overflow-hidden p-5 text-primary-foreground md:p-6">
-                  <img src={propertyImage} alt="" className="absolute inset-0 h-full w-full object-cover opacity-30" />
+                  <img src={coverImage} alt="" className="absolute inset-0 h-full w-full object-cover opacity-30" />
                   <div className="absolute inset-0 bg-foreground/85" />
                   <div className="relative pt-10 lg:pt-0">
                     <div className="min-w-0 max-w-[760px]">
                       <div className="mb-2 flex items-center gap-2 pr-36 sm:pr-44">
-                        <StatusPill status={lifecycle.status} label={lifecycle.label.toUpperCase()} />
+                        <StatusPill status={propertyStatusTone} label={propertyStatus.toUpperCase()} />
                         <span className="text-[12px] opacity-75">Property {hotel.displayId}</span>
                       </div>
                       <h1 className="max-w-3xl text-[24px] leading-[1.15] font-bold text-primary-foreground lg:text-[26px]">
