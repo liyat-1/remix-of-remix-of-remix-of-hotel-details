@@ -421,17 +421,32 @@ function HotelWorkspace() {
     }));
 
   const editHotel = () =>
-    openEdit(
-      "hotel",
-      [
+    setEdit({
+      title: "hotel",
+      fields: [
         { label: "Hotel name", value: hotel.name },
+        {
+          label: "Property status",
+          value: propertyStatus,
+          type: "select",
+          options: [...propertyStatuses],
+          hint: "Shown on the property header",
+        },
         { label: "Group", value: hotel.identity.group },
         { label: "Rooms", value: hotel.identity.rooms },
         { label: "Check-in", value: hotel.identity.checkIn },
         { label: "Check-out", value: hotel.identity.checkOut },
         { label: "Hotel ID", value: hotel.identity.hotelId, hint: "PMS property code" },
       ],
-      (v) =>
+      gallery: {
+        images: gallery,
+        coverId,
+        onDelete: deleteImage,
+        onCover: makeCover,
+        onAdd: restoreGallery,
+      },
+      onSave: (v) => {
+        if (v["Property status"]) setStatusOverride(v["Property status"]);
         patch((h) => ({
           ...h,
           name: v["Hotel name"] ?? h.name,
@@ -443,8 +458,9 @@ function HotelWorkspace() {
             checkOut: v["Check-out"] ?? h.identity.checkOut,
             hotelId: v["Hotel ID"] ?? h.identity.hotelId,
           },
-        })),
-    );
+        }));
+      },
+    });
 
   const editTeam = () =>
     openEdit(
