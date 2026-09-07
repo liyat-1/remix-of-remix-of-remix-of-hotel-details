@@ -1169,7 +1169,7 @@ function HotelWorkspace() {
                             className="flex items-center justify-between gap-3 rounded-xl border border-border/60 bg-surface px-3 py-2.5"
                           >
                             <div className="flex min-w-0 items-center gap-3">
-                              <InitialsAvatar name={e.name ?? e.role} size="sm" />
+                              <InitialsAvatar name={e.name} size="sm" />
                               <div className="min-w-0">
                                 <a
                                   href={`mailto:${e.email}`}
