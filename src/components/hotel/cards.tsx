@@ -1,0 +1,218 @@
+import type { ComponentType, ReactNode } from "react";
+import { cn } from "@/lib/utils";
+
+/* ------------------------------------------------------------------ */
+/* Card shell with an icon chip header                                 */
+/* ------------------------------------------------------------------ */
+
+export function IconChip({
+  icon: Icon,
+  tone = "primary",
+  className,
+}: {
+  icon: ComponentType<{ className?: string }>;
+  tone?: "primary" | "success" | "warning" | "danger" | "neutral";
+  className?: string;
+}) {
+  const tones = {
+    primary: "bg-primary/10 text-primary",
+    success: "bg-success-soft text-success",
+    warning: "bg-warning-soft text-warning",
+    danger: "bg-danger-soft text-danger",
+    neutral: "bg-muted text-muted-foreground",
+  } as const;
+  return (
+    <span
+      className={cn(
+        "grid size-9 shrink-0 place-items-center rounded-[11px]",
+        tones[tone],
+        className,
+      )}
+    >
+      <Icon className="size-[18px]" />
+    </span>
+  );
+}
+
+export function CardShell({
+  icon,
+  tone,
+  title,
+  subtitle,
+  action,
+  footer,
+  children,
+  className,
+  bodyClassName,
+}: {
+  icon?: ComponentType<{ className?: string }>;
+  tone?: "primary" | "success" | "warning" | "danger" | "neutral";
+  title?: string;
+  subtitle?: string;
+  action?: ReactNode;
+  footer?: ReactNode;
+  children?: ReactNode;
+  className?: string;
+  bodyClassName?: string;
+}) {
+  return (
+    <div
+      className={cn(
+        "group flex flex-col rounded-2xl border border-border bg-surface",
+        "shadow-[0_1px_3px_oklch(0.25_0.03_255/0.04),0_10px_28px_-14px_oklch(0.25_0.03_255/0.18)]",
+        "transition-all duration-200 hover:border-primary/20 hover:shadow-[0_2px_6px_oklch(0.25_0.03_255/0.05),0_20px_44px_-18px_oklch(0.25_0.03_255/0.22)]",
+        className,
+      )}
+    >
+      {title ? (
+        <div className="flex items-center gap-3 px-5 pt-5 pb-3">
+          {icon ? <IconChip icon={icon} tone={tone ?? "primary"} /> : null}
+          <div className="min-w-0 flex-1">
+            <h3 className="truncate text-[15px] font-semibold tracking-tight text-foreground">
+              {title}
+            </h3>
+            {subtitle ? (
+              <p className="truncate text-[12px] text-muted-foreground">{subtitle}</p>
+            ) : null}
+          </div>
+          {action ? <div className="flex shrink-0 items-center gap-1">{action}</div> : null}
+        </div>
+      ) : null}
+      <div className={cn("min-h-0 flex-1 px-5 pb-5", bodyClassName)}>{children}</div>
+      {footer ? (
+        <div className="mt-auto border-t border-border px-5 py-3">{footer}</div>
+      ) : null}
+    </div>
+  );
+}
+
+/* ------------------------------------------------------------------ */
+/* Health donut                                                        */
+/* ------------------------------------------------------------------ */
+
+type Segment = { value: number; color: string };
+
+export function Donut({
+  segments,
+  total,
+  centerValue,
+  centerLabel,
+  size = 168,
+  thickness = 16,
+}: {
+  segments: Segment[];
+  total: number;
+  centerValue: ReactNode;
+  centerLabel?: string;
+  size?: number;
+  thickness?: number;
+}) {
+  const r = (size - thickness) / 2;
+  const c = 2 * Math.PI * r;
+  let offset = 0;
+
+  return (
+    <div className="relative shrink-0" style={{ width: size, height: size }}>
+      <svg width={size} height={size} viewBox={`0 0 ${size} ${size}`} className="-rotate-90">
+        <circle
+          cx={size / 2}
+          cy={size / 2}
+          r={r}
+          fill="none"
+          strokeWidth={thickness}
+          className="stroke-muted"
+        />
+        {segments.filter((s) => s.value > 0).map((s, i) => {
+          const len = total > 0 ? (s.value / total) * c : 0;
+          const dash = `${Math.max(len - 3, 0)} ${c - Math.max(len - 3, 0)}`;
+          const el = (
+            <circle
+              key={i}
+              cx={size / 2}
+              cy={size / 2}
+              r={r}
+              fill="none"
+              strokeWidth={thickness}
+              strokeLinecap="round"
+              stroke={s.color}
+              strokeDasharray={dash}
+              strokeDashoffset={-offset}
+              style={{ transition: "stroke-dasharray 700ms ease, stroke-dashoffset 700ms ease" }}
+            />
+          );
+          offset += len;
+          return el;
+        })}
+      </svg>
+      <div className="absolute inset-0 grid place-items-center text-center">
+        <div>
+          <div className="text-[30px] leading-none font-bold tracking-tight text-foreground">
+            {centerValue}
+          </div>
+          {centerLabel ? (
+            <div className="mt-1.5 text-[11px] font-medium tracking-[0.09em] text-muted-foreground uppercase">
+              {centerLabel}
+            </div>
+          ) : null}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+export function LegendItem({
+  color,
+  label,
+  value,
+}: {
+  color: string;
+  label: string;
+  value: ReactNode;
+}) {
+  return (
+    <div className="flex items-center gap-2.5 rounded-lg px-2 py-1.5 transition-colors hover:bg-muted/60">
+      <span className="size-2.5 shrink-0 rounded-full" style={{ background: color }} />
+      <span className="min-w-0 flex-1 truncate text-[12.5px] text-muted-foreground">{label}</span>
+      <span className="text-[13px] font-semibold text-foreground">{value}</span>
+    </div>
+  );
+}
+
+/* ------------------------------------------------------------------ */
+/* Quick action tile                                                   */
+/* ------------------------------------------------------------------ */
+
+export function ActionTile({
+  icon: Icon,
+  title,
+  description,
+  onClick,
+  className,
+}: {
+  icon: ComponentType<{ className?: string }>;
+  title: string;
+  description: string;
+  onClick?: () => void;
+  className?: string;
+}) {
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      className={cn(
+        "group flex w-full items-center gap-3 rounded-xl border border-border bg-surface px-4 py-3 text-left",
+        "shadow-[0_1px_2px_oklch(0.25_0.03_255/0.03)] transition-all duration-200",
+        "hover:border-primary/20 hover:bg-surface-muted hover:shadow-[0_8px_20px_-12px_oklch(0.25_0.03_255/0.2)]",
+        className,
+      )}
+    >
+      <span className="grid size-9 shrink-0 place-items-center rounded-[10px] bg-primary/10 text-primary transition-colors group-hover:bg-primary group-hover:text-primary-foreground">
+        <Icon className="size-[18px]" />
+      </span>
+      <span className="min-w-0 flex-1">
+        <span className="block truncate text-[13.5px] font-semibold text-foreground">{title}</span>
+        <span className="block truncate text-[11.5px] text-muted-foreground">{description}</span>
+      </span>
+    </button>
+  );
+}
