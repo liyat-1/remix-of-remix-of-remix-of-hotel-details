@@ -259,6 +259,32 @@ function HotelWorkspace() {
   const [tagQuery, setTagQuery] = useState("");
   const [scrolled, setScrolled] = useState(false);
   const [active, setActive] = useState("snapshot");
+  const [gallery, setGallery] = useState<GalleryImage[]>(initialGallery);
+  const [coverId, setCoverId] = useState("exterior");
+  const [galleryOpen, setGalleryOpen] = useState(false);
+  const [statusOverride, setStatusOverride] = useState<string | null>(null);
+
+  const coverImage = gallery.find((g) => g.id === coverId)?.src ?? gallery[0]?.src ?? propertyImage;
+
+  const deleteImage = (id: string) => {
+    setGallery((g) => {
+      const next = g.filter((i) => i.id !== id);
+      if (id === coverId && next[0]) setCoverId(next[0].id);
+      return next;
+    });
+    toast.success("Photo removed");
+  };
+
+  const makeCover = (id: string) => {
+    setCoverId(id);
+    toast.success("Cover photo updated");
+  };
+
+  const restoreGallery = () => {
+    setGallery(initialGallery);
+    toast.success("Photos restored");
+  };
+
 
   const hotel = store[scenario];
 
