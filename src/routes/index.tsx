@@ -36,6 +36,15 @@ import {
   BadgeCheck,
   Gauge,
   Link as LinkIcon,
+  LogIn,
+  LogOut,
+  Hash,
+  CalendarDays,
+  Landmark,
+  Receipt,
+  UserRound,
+  Images,
+  Layers,
 } from "lucide-react";
 import {
   CardShell,
