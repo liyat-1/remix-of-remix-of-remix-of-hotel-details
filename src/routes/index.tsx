@@ -1053,7 +1053,7 @@ function HotelWorkspace() {
             </div>
 
             {/* identity — bento card */}
-            <div id="identity" className="scroll-mt-[118px] md:col-span-1 xl:col-span-1">
+            <div id="identity" className="scroll-mt-[118px] md:col-span-2 xl:col-span-2">
               <Surface className="h-full">
                 <div className="mb-4 flex items-center justify-between">
                   <div className="flex items-center gap-2.5">
@@ -1066,26 +1066,36 @@ function HotelWorkspace() {
                     Edit
                   </Button>
                 </div>
-                <div className="space-y-0.5">
-                  <Row label="Group" value={hotel.identity.group} />
-                  <Row label="Rooms" value={hotel.identity.rooms} />
-                  <Row label="Check-in" value={hotel.identity.checkIn} />
-                  <Row label="Check-out" value={hotel.identity.checkOut} />
-                  <Row
-                    label="Hotel ID"
-                    value={<span className="font-mono">{hotel.identity.hotelId}</span>}
-                    action={<CopyButton value={hotel.identity.hotelId} compact />}
-                  />
-                  <Row label="Booking engine" value={hotel.identity.bookingEngine} />
-                  <Row label="PMS" value={hotel.identity.pms} />
-                  <Row label="Parent chain" value={hotel.identity.parentChain} />
-                  <Row label="Added on" value={hotel.identity.addedOn} />
+                <div className="grid gap-3 lg:grid-cols-2">
+                  <Panel icon={Building2} title="Property" hint="Rooms, group and stay times">
+                    <div className="space-y-0.5">
+                      <Row icon={Layers} label="Group" value={hotel.identity.group} />
+                      <Row icon={BedDouble} label="Rooms" value={hotel.identity.rooms} />
+                      <Row icon={LogIn} label="Check-in" value={hotel.identity.checkIn} />
+                      <Row icon={LogOut} label="Check-out" value={hotel.identity.checkOut} />
+                      <Row icon={Building} label="Parent chain" value={hotel.identity.parentChain} />
+                    </div>
+                  </Panel>
+                  <Panel icon={Hash} title="Systems & records" hint="Identifiers and connections">
+                    <div className="space-y-0.5">
+                      <Row
+                        icon={Hash}
+                        label="Hotel ID"
+                        value={<span className="font-mono">{hotel.identity.hotelId}</span>}
+                        action={<CopyButton value={hotel.identity.hotelId} compact />}
+                      />
+                      <Row icon={Globe} label="Booking engine" value={hotel.identity.bookingEngine} />
+                      <Row icon={Server} label="PMS" value={hotel.identity.pms} />
+                      <Row icon={CalendarDays} label="Added on" value={hotel.identity.addedOn} />
+                    </div>
+                  </Panel>
                 </div>
               </Surface>
             </div>
 
             {/* people — bento card */}
-            <div id="people" className="scroll-mt-[118px] md:col-span-1 xl:col-span-1">
+            <div id="people" className="scroll-mt-[118px] md:col-span-2 xl:col-span-2">
+
               <Surface className="h-full">
                 <div className="mb-4 flex items-center justify-between">
                   <div className="flex items-center gap-2.5">
@@ -1094,67 +1104,91 @@ function HotelWorkspace() {
                     </span>
                     <h2 className="text-[15px] font-semibold text-foreground">People</h2>
                   </div>
-                  <Button variant="ghost" size="sm" onClick={editTeam}>
-                    Edit
-                  </Button>
                 </div>
-                <div className="space-y-4">
-                  {[
-                    { role: "CSM", name: hotel.people.csm },
-                    { role: "Sales agent", name: hotel.people.salesAgent },
-                    { role: "Referrer", name: hotel.people.referrer },
-                  ].map((p) => (
-                    <div key={p.role}>
-                      <div className="text-[12px] text-muted-foreground">{p.role}</div>
-                      <div className="text-[14.5px] font-semibold text-foreground">{p.name}</div>
-                    </div>
-                  ))}
-                </div>
-                <div className="mt-5 border-t border-border pt-4">
-                  <SubTitle>Hotel emails</SubTitle>
-                  {hotel.people.emails.length === 0 ? (
-                    <div className="rounded-lg border border-dashed border-border px-4 py-5 text-center">
-                      <Muted>No hotel emails added yet.</Muted>
-                      <div className="mt-2">
-                        <Button
-                          variant="outline"
-                          size="sm"
-                          onClick={() =>
-                            openEdit("hotel contact", [
-                              { label: "Name", value: "" },
-                              { label: "Role", value: "" },
-                              { label: "Email", value: "" },
-                            ])
-                          }
+                <div className="grid gap-3 lg:grid-cols-2">
+                  <Panel
+                    icon={UserRound}
+                    title="Account team"
+                    hint="Who looks after this property"
+                    action={
+                      <Button variant="ghost" size="sm" onClick={editTeam}>
+                        Edit
+                      </Button>
+                    }
+                  >
+                    <div className="space-y-2">
+                      {[
+                        { role: "CSM", name: hotel.people.csm },
+                        { role: "Sales agent", name: hotel.people.salesAgent },
+                        { role: "Referrer", name: hotel.people.referrer },
+                      ].map((p) => (
+                        <div
+                          key={p.role}
+                          className="flex items-center gap-3 rounded-xl border border-border/60 bg-surface px-3 py-2.5"
                         >
-                          <Plus className="size-4" /> Add contact
-                        </Button>
-                      </div>
-                    </div>
-                  ) : (
-                    <div className="space-y-3.5">
-                      {hotel.people.emails.map((e) => (
-                        <div key={e.email} className="flex items-start justify-between gap-3">
+                          <InitialsAvatar name={p.name} />
                           <div className="min-w-0">
-                            <div className="text-[12px] text-muted-foreground">{e.role}</div>
-                            <a
-                              href={`mailto:${e.email}`}
-                              className="block truncate text-[13.5px] font-medium text-foreground hover:text-primary hover:underline"
-                            >
-                              {e.email}
-                            </a>
+                            <div className="truncate text-[13.5px] font-semibold text-foreground">
+                              {p.name}
+                            </div>
+                            <div className="text-[11.5px] text-muted-foreground">{p.role}</div>
                           </div>
-                          <CopyButton value={e.email} compact />
                         </div>
                       ))}
                     </div>
-                  )}
+                  </Panel>
+
+                  <Panel icon={Mail} title="Hotel emails" hint="Contacts at the property">
+                    {hotel.people.emails.length === 0 ? (
+                      <div className="rounded-xl border border-dashed border-border px-4 py-5 text-center">
+                        <Muted>No hotel emails added yet.</Muted>
+                        <div className="mt-2">
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            onClick={() =>
+                              openEdit("hotel contact", [
+                                { label: "Name", value: "" },
+                                { label: "Role", value: "" },
+                                { label: "Email", value: "" },
+                              ])
+                            }
+                          >
+                            <Plus className="size-4" /> Add contact
+                          </Button>
+                        </div>
+                      </div>
+                    ) : (
+                      <div className="space-y-2">
+                        {hotel.people.emails.map((e) => (
+                          <div
+                            key={e.email}
+                            className="flex items-center justify-between gap-3 rounded-xl border border-border/60 bg-surface px-3 py-2.5"
+                          >
+                            <div className="flex min-w-0 items-center gap-3">
+                              <InitialsAvatar name={e.name} size="sm" />
+                              <div className="min-w-0">
+                                <a
+                                  href={`mailto:${e.email}`}
+                                  className="block truncate text-[13px] font-medium text-foreground hover:text-primary hover:underline"
+                                >
+                                  {e.email}
+                                </a>
+                                <div className="text-[11.5px] text-muted-foreground">{e.role}</div>
+                              </div>
+                            </div>
+                            <CopyButton value={e.email} compact />
+                          </div>
+                        ))}
+                      </div>
+                    )}
+                  </Panel>
                 </div>
               </Surface>
             </div>
 
             {/* legal & billing — bento card */}
-            <div id="legal" className="scroll-mt-[118px] md:col-span-2 xl:col-span-2">
+            <div id="legal" className="scroll-mt-[118px] md:col-span-2 xl:col-span-4">
               <Surface className="h-full">
                 <div className="mb-4 flex items-center gap-2.5">
                   <span className="grid size-8 place-items-center rounded-[10px] bg-primary/10 text-primary">
@@ -1162,14 +1196,17 @@ function HotelWorkspace() {
                   </span>
                   <h2 className="text-[15px] font-semibold text-foreground">Legal & billing</h2>
                 </div>
-                <div className="grid gap-6 lg:grid-cols-2">
-                  <div>
-                    <div className="mb-3 flex items-center justify-between">
-                      <SubTitle>Legal</SubTitle>
+                <div className="grid gap-3 lg:grid-cols-2">
+                  <Panel
+                    icon={Landmark}
+                    title="Legal"
+                    hint="Entity and registration"
+                    action={
                       <Button variant="ghost" size="sm" onClick={editLegal}>
                         Edit
                       </Button>
-                    </div>
+                    }
+                  >
                     {hotel.legal ? (
                       <div className="space-y-0.5">
                         <Row label="Legal name" value={hotel.legal.legalName} />
@@ -1206,17 +1243,20 @@ function HotelWorkspace() {
                         </div>
                       </div>
                     )}
-                  </div>
+                  </Panel>
 
-                  <div>
-                    <div className="mb-3 flex items-center justify-between">
-                      <SubTitle>Billing</SubTitle>
-                      {hotel.legal ? (
+                  <Panel
+                    icon={Receipt}
+                    title="Billing"
+                    hint="Addresses and billing settings"
+                    action={
+                      hotel.legal ? (
                         <Button variant="ghost" size="sm" onClick={editBilling}>
                           Edit
                         </Button>
-                      ) : null}
-                    </div>
+                      ) : null
+                    }
+                  >
                     {hotel.legal ? (
                       <div className="space-y-4">
                         <div>
@@ -1267,7 +1307,7 @@ function HotelWorkspace() {
                           />
                         ))}
                     </div>
-                  </div>
+                  </Panel>
                 </div>
               </Surface>
             </div>
@@ -1289,7 +1329,7 @@ function HotelWorkspace() {
                 <div className="grid gap-6 lg:grid-cols-2">
                   <div>
                     <SubTitle>Service</SubTitle>
-                    <StatusPill status={lifecycle.status} label={lifecycle.label.toUpperCase()} />
+                    <StatusPill status={propertyStatusTone} label={propertyStatus.toUpperCase()} />
                     <div className="mt-4 space-y-0.5">
                       <Row label="Service started" value={hotel.service.startedOn} />
                       <Row label="Churn date" value={hotel.service.churnDate ?? "—"} />
