@@ -97,8 +97,8 @@ export function Donut({
   total,
   centerValue,
   centerLabel,
-  size = 168,
-  thickness = 16,
+  size = 176,
+  thickness = 30,
 }: {
   segments: Segment[];
   total: number;
