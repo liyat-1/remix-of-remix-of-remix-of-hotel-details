@@ -120,11 +120,13 @@ export function Donut({
           r={r}
           fill="none"
           strokeWidth={thickness}
-          className="stroke-muted"
+          strokeLinecap="round"
+          className="stroke-surface-muted"
         />
         {segments.filter((s) => s.value > 0).map((s, i) => {
           const len = total > 0 ? (s.value / total) * c : 0;
-          const dash = `${Math.max(len - 3, 0)} ${c - Math.max(len - 3, 0)}`;
+          const gap = segments.filter((x) => x.value > 0).length > 1 ? 8 : 0;
+          const dash = `${Math.max(len - gap, 0)} ${c - Math.max(len - gap, 0)}`;
           const el = (
             <circle
               key={i}
