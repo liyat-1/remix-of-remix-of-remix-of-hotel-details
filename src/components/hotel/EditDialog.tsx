@@ -74,7 +74,6 @@ export function EditDialog({
   return (
     <Dialog open={!!target} onOpenChange={onOpenChange}>
       <DialogContent
-        showCloseButton
         className={cn(
           "flex max-h-[88vh] flex-col gap-0 overflow-hidden p-0",
           gallery ? "sm:max-w-3xl" : "sm:max-w-lg",
