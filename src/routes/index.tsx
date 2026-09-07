@@ -145,14 +145,19 @@ function Row({
   label,
   value,
   action,
+  icon: Icon,
 }: {
   label: string;
   value: ReactNode;
   action?: ReactNode;
+  icon?: React.ComponentType<{ className?: string }>;
 }) {
   return (
-    <div className="flex items-start justify-between gap-6 py-[7px]">
-      <span className="shrink-0 pt-px text-[12.5px] text-muted-foreground">{label}</span>
+    <div className="flex items-start justify-between gap-6 rounded-lg px-1 py-[7px] transition-colors hover:bg-surface/70">
+      <span className="flex shrink-0 items-center gap-2 pt-px text-[12.5px] text-muted-foreground">
+        {Icon ? <Icon className="size-3.5 shrink-0 text-muted-foreground/60" /> : null}
+        {label}
+      </span>
       <span className="flex min-w-0 items-center gap-1.5 text-right text-[13.5px] font-medium text-foreground">
         {value}
         {action}
