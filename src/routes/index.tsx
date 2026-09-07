@@ -1104,9 +1104,6 @@ function HotelWorkspace() {
                     </span>
                     <h2 className="text-[15px] font-semibold text-foreground">People</h2>
                   </div>
-                  <Button variant="ghost" size="sm" onClick={editTeam}>
-                    Edit
-                  </Button>
                 </div>
                 <div className="grid gap-3 lg:grid-cols-2">
                   <Panel
