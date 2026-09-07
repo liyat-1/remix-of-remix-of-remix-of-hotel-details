@@ -1329,7 +1329,7 @@ function HotelWorkspace() {
                 <div className="grid gap-6 lg:grid-cols-2">
                   <div>
                     <SubTitle>Service</SubTitle>
-                    <StatusPill status={lifecycle.status} label={lifecycle.label.toUpperCase()} />
+                    <StatusPill status={propertyStatusTone} label={propertyStatus.toUpperCase()} />
                     <div className="mt-4 space-y-0.5">
                       <Row label="Service started" value={hotel.service.startedOn} />
                       <Row label="Churn date" value={hotel.service.churnDate ?? "—"} />
