@@ -1053,7 +1053,7 @@ function HotelWorkspace() {
             </div>
 
             {/* identity — bento card */}
-            <div id="identity" className="scroll-mt-[118px] md:col-span-1 xl:col-span-1">
+            <div id="identity" className="scroll-mt-[118px] md:col-span-2 xl:col-span-2">
               <Surface className="h-full">
                 <div className="mb-4 flex items-center justify-between">
                   <div className="flex items-center gap-2.5">
@@ -1066,20 +1066,29 @@ function HotelWorkspace() {
                     Edit
                   </Button>
                 </div>
-                <div className="space-y-0.5">
-                  <Row label="Group" value={hotel.identity.group} />
-                  <Row label="Rooms" value={hotel.identity.rooms} />
-                  <Row label="Check-in" value={hotel.identity.checkIn} />
-                  <Row label="Check-out" value={hotel.identity.checkOut} />
-                  <Row
-                    label="Hotel ID"
-                    value={<span className="font-mono">{hotel.identity.hotelId}</span>}
-                    action={<CopyButton value={hotel.identity.hotelId} compact />}
-                  />
-                  <Row label="Booking engine" value={hotel.identity.bookingEngine} />
-                  <Row label="PMS" value={hotel.identity.pms} />
-                  <Row label="Parent chain" value={hotel.identity.parentChain} />
-                  <Row label="Added on" value={hotel.identity.addedOn} />
+                <div className="grid gap-3 lg:grid-cols-2">
+                  <Panel icon={Building2} title="Property" hint="Rooms, group and stay times">
+                    <div className="space-y-0.5">
+                      <Row icon={Layers} label="Group" value={hotel.identity.group} />
+                      <Row icon={BedDouble} label="Rooms" value={hotel.identity.rooms} />
+                      <Row icon={LogIn} label="Check-in" value={hotel.identity.checkIn} />
+                      <Row icon={LogOut} label="Check-out" value={hotel.identity.checkOut} />
+                      <Row icon={Building} label="Parent chain" value={hotel.identity.parentChain} />
+                    </div>
+                  </Panel>
+                  <Panel icon={Hash} title="Systems & records" hint="Identifiers and connections">
+                    <div className="space-y-0.5">
+                      <Row
+                        icon={Hash}
+                        label="Hotel ID"
+                        value={<span className="font-mono">{hotel.identity.hotelId}</span>}
+                        action={<CopyButton value={hotel.identity.hotelId} compact />}
+                      />
+                      <Row icon={Globe} label="Booking engine" value={hotel.identity.bookingEngine} />
+                      <Row icon={Server} label="PMS" value={hotel.identity.pms} />
+                      <Row icon={CalendarDays} label="Added on" value={hotel.identity.addedOn} />
+                    </div>
+                  </Panel>
                 </div>
               </Surface>
             </div>
