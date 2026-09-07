@@ -37,7 +37,14 @@ import {
   Gauge,
   Link as LinkIcon,
 } from "lucide-react";
-import { CardShell, Donut, LegendItem, ActionTile } from "@/components/hotel/cards";
+import {
+  CardShell,
+  Donut,
+  LegendItem,
+  ActionTile,
+  Panel,
+  InitialsAvatar,
+} from "@/components/hotel/cards";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Checkbox } from "@/components/ui/checkbox";
