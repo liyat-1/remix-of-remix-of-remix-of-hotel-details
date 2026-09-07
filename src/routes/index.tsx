@@ -224,6 +224,30 @@ const sectionNav = [
 
 const tagLibrary = ["Priority", "Enterprise", "Marriott", "VIP", "Cruiseport", "Churn risk"];
 
+const propertyStatuses = [
+  "Active",
+  "Onboarding",
+  "Attention required",
+  "Paused",
+  "Churned",
+] as const;
+
+const statusTone: Record<string, Health> = {
+  Active: "healthy",
+  Onboarding: "warning",
+  "Attention required": "failed",
+  Paused: "neutral",
+  Churned: "neutral",
+};
+
+const initialGallery: GalleryImage[] = [
+  { id: "exterior", src: propertyImage, label: "Exterior" },
+  { id: "lobby", src: lobbyImage, label: "Lobby" },
+  { id: "room", src: roomImage, label: "Guest room" },
+  { id: "pool", src: poolImage, label: "Rooftop pool" },
+];
+
+
 function HotelWorkspace() {
   const [scenario, setScenario] = useState<Scenario>("live");
   const [store, setStore] = useState<Record<Scenario, Hotel>>(scenarios);
