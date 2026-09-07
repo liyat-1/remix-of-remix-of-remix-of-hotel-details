@@ -87,9 +87,18 @@ import {
   type Hotel,
 } from "@/lib/hotel-data";
 import { StatusDot, StatusPill, CopyButton } from "@/components/hotel/primitives";
-import { EditDrawer, type EditTarget, type EditField } from "@/components/hotel/EditDrawer";
+import {
+  EditDialog,
+  type EditTarget,
+  type EditField,
+  type GalleryImage,
+} from "@/components/hotel/EditDialog";
 import { AppSidebar } from "@/components/hotel/AppSidebar";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import propertyImage from "@/assets/hotel-property.jpg";
+import lobbyImage from "@/assets/hotel-lobby.jpg";
+import roomImage from "@/assets/hotel-room.jpg";
+import poolImage from "@/assets/hotel-pool.jpg";
 
 export const Route = createFileRoute("/")({
   head: () => ({
