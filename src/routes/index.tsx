@@ -1307,7 +1307,7 @@ function HotelWorkspace() {
                           />
                         ))}
                     </div>
-                  </div>
+                  </Panel>
                 </div>
               </Surface>
             </div>
