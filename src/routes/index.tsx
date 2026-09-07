@@ -1243,17 +1243,20 @@ function HotelWorkspace() {
                         </div>
                       </div>
                     )}
-                  </div>
+                  </Panel>
 
-                  <div>
-                    <div className="mb-3 flex items-center justify-between">
-                      <SubTitle>Billing</SubTitle>
-                      {hotel.legal ? (
+                  <Panel
+                    icon={Receipt}
+                    title="Billing"
+                    hint="Addresses and billing settings"
+                    action={
+                      hotel.legal ? (
                         <Button variant="ghost" size="sm" onClick={editBilling}>
                           Edit
                         </Button>
-                      ) : null}
-                    </div>
+                      ) : null
+                    }
+                  >
                     {hotel.legal ? (
                       <div className="space-y-4">
                         <div>
