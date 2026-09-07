@@ -347,6 +347,13 @@ function HotelWorkspace() {
     };
   }, [hotel, attention]);
 
+  const propertyStatus =
+    statusOverride ?? (lifecycle.label === "Service ended" ? "Churned" : lifecycle.label);
+  const propertyStatusTone = statusOverride
+    ? (statusTone[statusOverride] ?? "neutral")
+    : lifecycle.status;
+
+
   const location = useMemo(() => {
     const addr = hotel.legal?.billingAddress;
     if (!addr) return null;
