@@ -150,7 +150,7 @@ function Row({
   label: string;
   value: ReactNode;
   action?: ReactNode;
-  icon?: React.ComponentType<{ className?: string }>;
+  icon?: ComponentType<{ className?: string }>;
 }) {
   return (
     <div className="flex items-start justify-between gap-6 rounded-lg px-1 py-[7px] transition-colors hover:bg-surface/70">
