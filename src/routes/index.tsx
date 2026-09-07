@@ -1094,7 +1094,8 @@ function HotelWorkspace() {
             </div>
 
             {/* people — bento card */}
-            <div id="people" className="scroll-mt-[118px] md:col-span-1 xl:col-span-1">
+            <div id="people" className="scroll-mt-[118px] md:col-span-2 xl:col-span-2">
+
               <Surface className="h-full">
                 <div className="mb-4 flex items-center justify-between">
                   <div className="flex items-center gap-2.5">
